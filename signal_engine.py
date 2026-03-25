@@ -362,12 +362,18 @@ def fetch_vc_signals():
 # ─────────────────────────────────────────────
 
 def format_job_data(job_results):
-    lines = ["ROLE POSTING VOLUMES:"]
-    for r in job_results:
-        if r["count"] > 0:
-            lines.append(f"  {r['role']} ({r['category']}): {r['count']} postings via {r['source']}")
-        else:
-            lines.append(f"  {r['role']} ({r['category']}): no data retrieved")
+    lines = ["ROLE POSTING VOLUMES (from Adzuna job API — use these numbers directly in your analysis):"]
+    available = [r for r in job_results if r["count"] > 0]
+    unavailable = [r for r in job_results if r["count"] == 0]
+
+    for r in available:
+        title_sample = ", ".join(r["titles"][:3]) if r["titles"] else ""
+        sample_str = f' | Sample titles: "{title_sample}"' if title_sample else ""
+        lines.append(f"  {r['role']} ({r['category']}): {r['count']:,} postings{sample_str}")
+
+    if unavailable:
+        lines.append("\n  No data retrieved for: " + ", ".join(r["role"] for r in unavailable))
+
     return "\n".join(lines)
 
 
@@ -399,7 +405,11 @@ are knowledge workers who pay for early warning and specific guidance.
 
 Today's date: {today}
 
-You have five data streams:
+You have five data streams. The job posting volumes are REAL numbers pulled
+from the Adzuna API today — cite them specifically in your analysis (e.g.
+"only 668 video editor postings nationwide" or "customer service shows
+1.2M postings suggesting demand remains high but AI pressure is building").
+Do NOT say data was unavailable if numbers are provided below.
 
 {format_job_data(job_data)}
 
