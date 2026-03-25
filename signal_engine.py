@@ -15,6 +15,7 @@
 
 import os
 import json
+import time
 import anthropic
 import requests
 from datetime import date, timedelta
@@ -140,46 +141,57 @@ def fetch_job_postings(role):
             f"&content-type=application/json"
         )
         response = requests.get(url, headers=HEADERS, timeout=10)
+        print(f"    [Adzuna] status={response.status_code}", end="")
         if response.status_code == 200:
             data   = response.json()
             count  = data.get("count", 0)
             items  = data.get("results", [])
             titles = [i.get("title", "") for i in items[:5]]
+            print(f" count={count}")
             if count > 0:
                 return {"role": role, "count": count, "titles": titles, "source": "Adzuna"}
         else:
-            print(f"    Adzuna API: status {response.status_code}")
+            print(f" — blocked")
     except Exception as e:
-        print(f"    Adzuna error: {e}")
+        print(f"\n    [Adzuna] error: {e}")
 
     # Source B: Indeed RSS
     try:
         url      = f"https://www.indeed.com/rss?q={query}&l=United+States&sort=date"
         response = requests.get(url, headers=HEADERS, timeout=10)
+        print(f"    [Indeed] status={response.status_code}", end="")
         if response.status_code == 200:
             soup   = BeautifulSoup(response.text, "xml")
             items  = soup.find_all("item")
             count  = len(items)
             titles = [i.find("title").text for i in items[:5] if i.find("title")]
+            print(f" count={count}")
             if count > 0:
                 return {"role": role, "count": count, "titles": titles, "source": "Indeed"}
+        else:
+            print(f" — blocked")
     except Exception as e:
-        print(f"    Indeed error: {e}")
+        print(f"\n    [Indeed] error: {e}")
 
     # Source C: SimplyHired RSS
     try:
         url      = f"https://www.simplyhired.com/search?q={query}&l=United+States&job-type=fulltime&format=rss"
         response = requests.get(url, headers=HEADERS, timeout=10)
+        print(f"    [SimplyHired] status={response.status_code}", end="")
         if response.status_code == 200:
             soup   = BeautifulSoup(response.text, "xml")
             items  = soup.find_all("item")
             count  = len(items)
             titles = [i.find("title").text for i in items[:5] if i.find("title")]
+            print(f" count={count}")
             if count > 0:
                 return {"role": role, "count": count, "titles": titles, "source": "SimplyHired"}
+        else:
+            print(f" — blocked")
     except Exception as e:
-        print(f"    SimplyHired error: {e}")
+        print(f"\n    [SimplyHired] error: {e}")
 
+    print(f"    [result] no data found")
     return {"role": role, "count": 0, "titles": [], "source": "unavailable"}
 
 
@@ -453,13 +465,22 @@ Rules:
 - Tone: authoritative, urgent where warranted, never alarmist
 """
 
-    response = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=3000,
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response.content[0].text
+    for attempt in range(5):
+        try:
+            response = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=3000,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.content[0].text
+        except anthropic.APIStatusError as e:
+            if e.status_code == 529:
+                wait = 30 * (attempt + 1)
+                print(f"  Claude overloaded — retrying in {wait}s (attempt {attempt + 1}/5)...")
+                time.sleep(wait)
+            else:
+                raise
+    raise RuntimeError("Claude API overloaded after 5 attempts — try again later")
 
 
 # ─────────────────────────────────────────────
