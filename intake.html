@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Profile — Displacement Signal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0a;
+      --surface:   #111111;
+      --border:    #1f1f1f;
+      --border-hi: #2e2e2e;
+      --text:      #e8e4dc;
+      --muted:     #6b6b6b;
+      --accent:    #c8a96e;
+      --accent-dim:#7a6540;
+      --danger:    #e05c5c;
+      --green:     #4caf6e;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
+      text-align: center;
+    }
+
+    .step-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── FORM CONTAINER ── */
+    .form-wrap {
+      max-width: 600px;
+      margin: 0 auto 6rem;
+      padding: 0 2rem;
+    }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 2.5rem;
+    }
+
+    /* ── FIELD GROUPS ── */
+    .field-group {
+      margin-bottom: 2rem;
+    }
+
+    .field-group:last-of-type {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .field-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+      margin-top: -0.25rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border-hi);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      padding: 0.75rem 1rem;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent-dim);
+    }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+
+    select option {
+      background: #1a1a1a;
+      color: var(--text);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── RADIO/CHECKBOX GRID ── */
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .option-grid.single { grid-template-columns: 1fr; }
+
+    .option-item {
+      position: relative;
+    }
+
+    .option-item input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .option-item label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+
+    .option-item label::before {
+      content: '';
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--border-hi);
+      border-radius: 2px;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .option-item input:checked + label {
+      border-color: var(--accent-dim);
+      color: var(--text);
+    }
+
+    .option-item input:checked + label::before {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── SUBMIT ── */
+    .submit-row {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none;
+      border-radius: 2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-submit:hover { opacity: 0.85; }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .privacy-note {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── SUCCESS STATE ── */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .success-state .check {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-state h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.75rem;
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+    }
+
+    .success-state p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 540px) {
+      .option-grid { grid-template-columns: 1fr; }
+      nav { padding: 1.25rem 1.25rem; }
+      .form-card { padding: 1.75rem 1.25rem; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">DisplacementSignal</a>
+    <span class="nav-tag">Subscriber Intake · Step 01</span>
+  </nav>
+
+  <div class="hero">
+    <span class="step-label">01 — Profile Setup</span>
+    <h1>Tell us about <em>your role.</em></h1>
+    <p>This takes 2 minutes. Your answers shape every report you receive — the more specific, the sharper your intelligence.</p>
+  </div>
+
+  <div class="form-wrap">
+    <div class="form-card">
+
+      <!-- SUCCESS STATE -->
+      <div class="success-state" id="successState">
+        <div class="check">✓</div>
+        <h2>Profile received.</h2>
+        <p>Your first personalized briefing will arrive at 5am tomorrow.<br />Watch your inbox.</p>
+      </div>
+
+      <!-- FORM -->
+      <form id="intakeForm" action="https://formspree.io/f/mlgoewle" method="POST">
+
+        <!-- Hidden field for metadata -->
+        <input type="hidden" name="_subject" value="New Displacement Signal Subscriber Profile" />
+        <input type="hidden" name="_next" value="" />
+
+        <div class="section-label">Your Identity</div>
+
+        <div class="field-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@company.com" required />
+        </div>
+
+        <div class="field-group">
+          <label for="job_title">Job title</label>
+          <p class="field-hint">Be specific — "Senior Copywriter" is more useful than "Writer"</p>
+          <input type="text" id="job_title" name="job_title" placeholder="e.g. Financial Analyst, Paralegal, Customer Support Lead" required />
+        </div>
+
+        <hr class="divider" />
+        <div class="section-label">Your Industry</div>
+
+        <div class="field-group">
+          <label for="industry">Primary industry</label>
+          <select id="industry" name="industry" required>
+            <option value="" disabled selected>Select your industry</option>
+            <option>Accounting & Finance</option>
+            <option>Advertising & Marketing</option>
+            <option>Architecture & Engineering</option>
+            <option>Arts, Entertainment & Media</option>
+            <option>Construction & Trades</option>
+            <option>Consulting</option>
+            <option>Customer Service & Support</option>
+            <option>Education</option>
+            <option>Government & Public Sector</option>
+            <option>Healthcare & Life Sciences</option>
+            <option>Human Resources</option>
+            <option>Insurance</option>
+            <option>Legal</option>
+            <option>Logistics & Supply Chain</option>
+            <option>Manufacturing</option>
+            <option>Real Estate</option>
+            <option>Retail & E-Commerce</option>
+            <option>Software & Technology</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Seniority level</label>
+          <div class="option-grid">
+            <div class="option-item">
+              <input type="radio" id="s1" name="seniority" value="Entry-level (0-3 years)" required />
+              <label for="s1">Entry-level</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="s2" name="seniority" value="Mid-level (3-7 years)" />
+              <label for="s2">Mid-level</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="s3" name="seniority" value="Senior (7-15 years)" />
+              <label for="s3">Senior</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="s4" name="seniority" value="Leadership / Executive" />
+              <label for="s4">Leadership / Executive</label>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider" />
+        <div class="section-label">Your Location</div>
+
+        <div class="field-group">
+          <label for="location_city">City & State</label>
+          <input type="text" id="location_city" name="location_city" placeholder="e.g. Austin, TX" required />
+        </div>
+
+        <div class="field-group">
+          <label>Work arrangement</label>
+          <div class="option-grid">
+            <div class="option-item">
+              <input type="radio" id="w1" name="work_arrangement" value="Remote" required />
+              <label for="w1">Remote</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="w2" name="work_arrangement" value="Hybrid" />
+              <label for="w2">Hybrid</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="w3" name="work_arrangement" value="On-site" />
+              <label for="w3">On-site</label>
+            </div>
+            <div class="option-item">
+              <input type="radio" id="w4" name="work_arrangement" value="Self-employed / Freelance" />
+              <label for="w4">Freelance / Self-employed</label>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider" />
+        <div class="section-label">Your Concerns</div>
+
+        <div class="field-group">
+          <label>What worries you most about AI in your field?</label>
+          <p class="field-hint">Select all that apply</p>
+          <div class="option-grid single">
+            <div class="option-item">
+              <input type="checkbox" id="c1" name="concerns" value="My specific role being automated" />
+              <label for="c1">My specific role being automated</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="c2" name="concerns" value="Entry-level jobs disappearing before I can advance" />
+              <label for="c2">Entry-level jobs disappearing before I can advance</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="c3" name="concerns" value="Salary compression as AI lowers the value of my skills" />
+              <label for="c3">Salary compression as AI lowers the value of my skills</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="c4" name="concerns" value="Not knowing which skills to develop next" />
+              <label for="c4">Not knowing which skills to develop next</label>
+            </div>
+            <div class="option-item">
+              <input type="checkbox" id="c5" name="concerns" value="My company using AI to reduce headcount" />
+              <label for="c5">My company using AI to reduce headcount</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="submit-row">
+          <button type="submit" class="btn-submit" id="submitBtn">
+            Activate My Profile →
+          </button>
+          <p class="privacy-note">No spam. No selling your data. Unsubscribe anytime.</p>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 Displacement Signal LLC</span>
+    <span>displacementsignal.com</span>
+  </footer>
+
+  <script>
+    const form = document.getElementById('intakeForm');
+    const successState = document.getElementById('successState');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          form.style.display = 'none';
+          successState.style.display = 'block';
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Activate My Profile →';
+          alert('Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Activate My Profile →';
+        alert('Connection error. Please try again.');
+      }
+    });
+  </script>
+
+</body>
+</html>
