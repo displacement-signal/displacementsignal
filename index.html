@@ -611,7 +611,7 @@
         <div class="report-dot"></div>
         <div class="report-title-text">Displacement Signal — Daily Briefing</div>
       </div>
-      <div class="report-date">Mon, Mar 24, 2026 · 5:00am EST</div>
+      <div class="report-date" id="report-date"></div>
     </div>
     <div class="report-body">
       <div class="report-section">
@@ -774,6 +774,14 @@
 </div>
 
 <script>
+  // Auto-update sample report date to yesterday
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const formatted = `${days[yesterday.getDay()]}, ${months[yesterday.getMonth()]} ${yesterday.getDate()}, ${yesterday.getFullYear()} · 5:00am EST`;
+  document.getElementById('report-date').textContent = formatted;
+
   function handleSubmit() {
     const email = document.getElementById('email-input').value;
     if (!email || !email.includes('@')) {
