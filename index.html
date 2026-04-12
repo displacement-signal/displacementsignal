@@ -732,7 +732,7 @@
           <input id="teaser-industry" type="text" placeholder="e.g. Healthcare, Finance, Legal" style="width:100%; background: var(--black); border: 0.5px solid var(--border-bright); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 12px 16px; border-radius: 6px; outline: none;" />
         </div>
       </div>
-      <button id="teaser-btn" onclick="runTeaser()" style="width:100%; padding: 14px; background: var(--accent); border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; color: var(--black); cursor: pointer; transition: opacity 0.2s;">Generate My Risk Score &rarr;</button>
+      <button id="teaser-btn" style="width:100%; padding: 14px; background: var(--accent); border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.05em; color: var(--black); cursor: pointer; transition: opacity 0.2s;">Generate My Risk Score &rarr;</button>
       <p id="teaser-error" style="display:none; margin-top: 10px; font-size: 12px; color: var(--danger); font-family: 'DM Mono', monospace; text-align: center;">Please enter both your job title and industry.</p>
     </div>
 
@@ -856,8 +856,10 @@
   document.addEventListener("DOMContentLoaded", function() {
     var t = document.getElementById("teaser-title");
     var i = document.getElementById("teaser-industry");
+    var btn = document.getElementById("teaser-btn");
     if (t) t.addEventListener("keydown", function(e) { if (e.key === "Enter") runTeaser(); });
     if (i) i.addEventListener("keydown", function(e) { if (e.key === "Enter") runTeaser(); });
+    if (btn) btn.addEventListener("click", runTeaser);
   });
 </script>
 
