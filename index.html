@@ -795,7 +795,8 @@
 </section>
 
 <script>
-  var teaserLoadingMessages = ["Analyzing job posting trends...","Scanning VC funding signals...","Checking AI product releases...","Calculating displacement risk...","Generating your score..."];
+(function() {
+  var teaserMsgs = ["Analyzing job posting trends...","Scanning VC funding signals...","Checking AI product releases...","Calculating displacement risk...","Generating your score..."];
 
   function runTeaser() {
     var title = document.getElementById("teaser-title").value.trim();
@@ -809,8 +810,8 @@
     var width = 0;
     var barFill = document.getElementById("teaser-bar-fill");
     var loadingMsg = document.getElementById("teaser-loading-msg");
-    var barInterval = setInterval(function() { width = Math.min(width + (Math.random() * 8 + 2), 90); barFill.style.width = width + "%"; }, 300);
-    var msgInterval = setInterval(function() { msgIndex = (msgIndex + 1) % teaserLoadingMessages.length; loadingMsg.textContent = teaserLoadingMessages[msgIndex]; }, 1800);
+    var barInterval = setInterval(function() { width = Math.min(width + Math.random() * 8 + 2, 90); barFill.style.width = width + "%"; }, 300);
+    var msgInterval = setInterval(function() { msgIndex = (msgIndex + 1) % teaserMsgs.length; loadingMsg.textContent = teaserMsgs[msgIndex]; }, 1800);
 
     fetch("https://tender-joy-production-17ff.up.railway.app/score", {
       method: "POST",
@@ -839,7 +840,6 @@
       document.getElementById("teaser-error").style.display = "block";
     });
   }
-  REMOVETO
 
   function resetTeaser() {
     document.getElementById("teaser-result").style.display = "none";
@@ -847,6 +847,9 @@
     document.getElementById("teaser-title").value = "";
     document.getElementById("teaser-industry").value = "";
   }
+
+  window.runTeaser = runTeaser;
+  window.resetTeaser = resetTeaser;
 
   document.addEventListener("DOMContentLoaded", function() {
     var t = document.getElementById("teaser-title");
@@ -856,6 +859,7 @@
     if (i) i.addEventListener("keydown", function(e) { if (e.key === "Enter") runTeaser(); });
     if (btn) btn.addEventListener("click", runTeaser);
   });
+})();
 </script>
 
 <div class="divider"></div>
