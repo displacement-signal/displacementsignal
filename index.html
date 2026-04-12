@@ -930,13 +930,43 @@
 </div>
 
 <script>
-  // Auto-update sample report date to yesterday
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
+  // Live sample report
   const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const formatted = `${days[yesterday.getDay()]}, ${months[yesterday.getMonth()]} ${yesterday.getDate()}, ${yesterday.getFullYear()} · 5:00am EST`;
+  const now = new Date();
+  const formatted = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()} · Live`;
   document.getElementById('report-date').textContent = formatted;
+
+  fetch('https://tender-joy-production-17ff.up.railway.app/public-report')
+    .then(r => r.json())
+    .then(data => {
+      if (!data.signals) return;
+      const body = document.getElementById('report-body');
+      body.innerHTML = `
+        <div class="report-section">
+          <div class="report-section-label">Your role — ${data.role_label}</div>
+          ${data.signals.map(s => `
+          <div class="report-line">
+            <span class="risk-badge ${s.badge_class}">${s.badge}</span>
+            ${s.text}
+          </div>`).join('')}
+        </div>
+        <div class="report-section">
+          <div class="report-section-label">Funding signals</div>
+          ${data.funding.map(s => `
+          <div class="report-line">
+            <span class="risk-badge ${s.badge_class}">${s.badge}</span>
+            ${s.text}
+          </div>`).join('')}
+        </div>
+        <div class="report-section">
+          <div class="report-section-label">Recommended action</div>
+          <div class="report-line" style="color: var(--signal); font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.04em;">
+            → ${data.action}
+          </div>
+        </div>`;
+    })
+    .catch(() => {});
 
   function handleSubmit() {
     const email = document.getElementById('email-input').value;
