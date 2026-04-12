@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update Your Profile — Displacement Signal</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0a; --surface: #111111; --border: #1f1f1f; --border-hi: #2e2e2e;
+      --text: #e8e4dc; --muted: #6b6b6b; --accent: #c8a96e; --accent-dim: #7a6540;
+      --danger: #e05c5c; --green: #4caf6e;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-weight: 300; font-size: 15px; line-height: 1.7; min-height: 100vh; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2.5rem; border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); text-decoration: none; }
+    .hero { max-width: 680px; margin: 0 auto; padding: 4rem 2rem 2rem; text-align: center; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 400; margin-bottom: 0.75rem; }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero p { color: var(--muted); font-size: 0.95rem; }
+    .form-wrap { max-width: 600px; margin: 0 auto 6rem; padding: 0 2rem; }
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; padding: 2.5rem; }
+    .field-group { margin-bottom: 2rem; }
+    label { display: block; font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+    .field-hint { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; margin-top: -0.25rem; }
+    input[type="text"], input[type="email"], select, textarea {
+      width: 100%; background: var(--bg); border: 1px solid var(--border-hi); color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 300; padding: 0.75rem 1rem;
+      border-radius: 2px; outline: none; transition: border-color 0.2s; -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-dim); }
+    select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+    select option { background: #1a1a1a; color: var(--text); }
+    textarea { resize: vertical; min-height: 80px; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .section-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .option-grid.single { grid-template-columns: 1fr; }
+    .option-item { position: relative; }
+    .option-item input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .option-item label { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.9rem; background: var(--bg); border: 1px solid var(--border-hi); border-radius: 2px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 300; letter-spacing: 0; text-transform: none; color: var(--muted); transition: all 0.15s; }
+    .option-item label::before { content: ''; width: 14px; height: 14px; border: 1px solid var(--border-hi); border-radius: 2px; flex-shrink: 0; transition: all 0.15s; }
+    .option-item input:checked + label { border-color: var(--accent-dim); color: var(--text); }
+    .option-item input:checked + label::before { background: var(--accent); border-color: var(--accent); }
+    .btn-submit { width: 100%; padding: 1rem; background: var(--accent); color: #0a0a0a; border: none; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; margin-top: 2rem; }
+    .btn-submit:hover { opacity: 0.85; }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+    .privacy-note { text-align: center; font-size: 0.75rem; color: var(--muted); margin-top: 1rem; }
+    .status-msg { display: none; padding: 1rem; border-radius: 2px; font-size: 0.85rem; font-family: 'DM Mono', monospace; text-align: center; margin-top: 1rem; }
+    .status-ok { background: rgba(74,175,110,0.1); border: 1px solid rgba(74,175,110,0.3); color: var(--green); }
+    .status-err { background: rgba(224,92,92,0.1); border: 1px solid rgba(224,92,92,0.3); color: var(--danger); }
+    /* Request form */
+    #request-form { text-align: center; padding: 2rem; }
+    #request-form p { color: var(--muted); margin-bottom: 1.5rem; font-size: 0.9rem; }
+    footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; display: flex; justify-content: space-between; }
+    footer span { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-logo">DisplacementSignal</a>
+    <span style="font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em;">Profile Management</span>
+  </nav>
+
+  <!-- REQUEST LINK STATE (shown when no token in URL) -->
+  <div id="request-state">
+    <div class="hero">
+      <h1>Update your <em>profile.</em></h1>
+      <p>Enter your email and we'll send you a secure link to update your profile.</p>
+    </div>
+    <div class="form-wrap">
+      <div class="form-card">
+        <div id="request-form">
+          <div class="field-group" style="text-align:left">
+            <label for="request-email">Email address</label>
+            <input type="text" id="request-email" placeholder="you@company.com" />
+          </div>
+          <button class="btn-submit" id="request-btn" onclick="requestLink()">Send Update Link →</button>
+          <div id="request-status" class="status-msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATE FORM STATE (shown when token in URL) -->
+  <div id="update-state" style="display:none">
+    <div class="hero">
+      <h1>Your <em>profile.</em></h1>
+      <p>Update any fields below. Your next report will reflect these changes.</p>
+    </div>
+    <div class="form-wrap">
+      <div class="form-card">
+
+        <div id="loading-state" style="text-align:center; padding: 2rem; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em;">Loading your profile...</div>
+
+        <div id="profile-form" style="display:none">
+          <div class="section-label">Your Identity</div>
+
+          <div class="field-group">
+            <label for="job_title">Job title</label>
+            <input type="text" id="job_title" placeholder="e.g. Financial Analyst" />
+          </div>
+
+          <div class="field-group">
+            <label for="employer">Employer <span style="color: var(--muted); font-size: 0.85em; text-transform: none; letter-spacing: 0;">(optional)</span></label>
+            <p class="field-hint">Lets us include company-specific signals in your report.</p>
+            <input type="text" id="employer" placeholder="e.g. JPMorgan Chase, Dell, Kaiser Permanente" />
+          </div>
+
+          <div class="field-group">
+            <label for="daily_responsibilities">What do you actually do day-to-day?</label>
+            <p class="field-hint">The more specific, the sharper your report.</p>
+            <textarea id="daily_responsibilities" rows="4" placeholder="Describe the actual tasks you do each day..."></textarea>
+          </div>
+
+          <hr class="divider" />
+          <div class="section-label">Your Industry</div>
+
+          <div class="field-group">
+            <label for="industry">Primary industry</label>
+            <select id="industry">
+              <option value="" disabled>Select your industry</option>
+              <option>Accounting & Finance</option>
+              <option>Advertising & Marketing</option>
+              <option>Architecture & Engineering</option>
+              <option>Arts, Entertainment & Media</option>
+              <option>Construction & Trades</option>
+              <option>Consulting</option>
+              <option>Customer Service & Support</option>
+              <option>Education</option>
+              <option>Government & Public Sector</option>
+              <option>Healthcare & Life Sciences</option>
+              <option>Human Resources</option>
+              <option>Insurance</option>
+              <option>Legal</option>
+              <option>Logistics & Supply Chain</option>
+              <option>Manufacturing</option>
+              <option>Real Estate</option>
+              <option>Retail & E-Commerce</option>
+              <option>Software & Technology</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label>Seniority level</label>
+            <div class="option-grid">
+              <div class="option-item"><input type="radio" id="s1" name="seniority" value="Entry-level (0-3 years)" /><label for="s1">Entry-level</label></div>
+              <div class="option-item"><input type="radio" id="s2" name="seniority" value="Mid-level (3-7 years)" /><label for="s2">Mid-level</label></div>
+              <div class="option-item"><input type="radio" id="s3" name="seniority" value="Senior (7-15 years)" /><label for="s3">Senior</label></div>
+              <div class="option-item"><input type="radio" id="s4" name="seniority" value="Leadership / Executive" /><label for="s4">Leadership / Executive</label></div>
+            </div>
+          </div>
+
+          <hr class="divider" />
+          <div class="section-label">Your Location</div>
+
+          <div class="field-group">
+            <label for="location_city">City & State</label>
+            <input type="text" id="location_city" placeholder="e.g. Austin, TX" />
+          </div>
+
+          <div class="field-group">
+            <label>Work arrangement</label>
+            <div class="option-grid">
+              <div class="option-item"><input type="radio" id="w1" name="work_arrangement" value="Remote" /><label for="w1">Remote</label></div>
+              <div class="option-item"><input type="radio" id="w2" name="work_arrangement" value="Hybrid" /><label for="w2">Hybrid</label></div>
+              <div class="option-item"><input type="radio" id="w3" name="work_arrangement" value="On-site" /><label for="w3">On-site</label></div>
+              <div class="option-item"><input type="radio" id="w4" name="work_arrangement" value="Self-employed / Freelance" /><label for="w4">Freelance / Self-employed</label></div>
+            </div>
+          </div>
+
+          <hr class="divider" />
+          <div class="section-label">Your Concerns</div>
+
+          <div class="field-group">
+            <label>What worries you most about AI in your field?</label>
+            <div class="option-grid single">
+              <div class="option-item"><input type="checkbox" id="c1" name="concerns" value="My specific role being automated" /><label for="c1">My specific role being automated</label></div>
+              <div class="option-item"><input type="checkbox" id="c2" name="concerns" value="Entry-level jobs disappearing before I can advance" /><label for="c2">Entry-level jobs disappearing before I can advance</label></div>
+              <div class="option-item"><input type="checkbox" id="c3" name="concerns" value="Salary compression as AI lowers the value of my skills" /><label for="c3">Salary compression as AI lowers the value of my skills</label></div>
+              <div class="option-item"><input type="checkbox" id="c4" name="concerns" value="Not knowing which skills to develop next" /><label for="c4">Not knowing which skills to develop next</label></div>
+              <div class="option-item"><input type="checkbox" id="c5" name="concerns" value="My company using AI to reduce headcount" /><label for="c5">My company using AI to reduce headcount</label></div>
+            </div>
+          </div>
+
+          <button class="btn-submit" id="save-btn" onclick="saveProfile()">Save Changes →</button>
+          <div id="save-status" class="status-msg"></div>
+          <p class="privacy-note">Changes take effect on your next Monday briefing.</p>
+        </div>
+
+        <div id="error-state" style="display:none; text-align:center; padding: 2rem;">
+          <p style="color: var(--danger); font-family: 'DM Mono', monospace; font-size: 0.85rem;">This link is invalid or has expired.<br><a href="/update.html" style="color: var(--accent);">Request a new one →</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 Displacement Signal LLC</span>
+    <span>displacementsignal.com</span>
+  </footer>
+
+  <script>
+    var RAILWAY_URL = "https://tender-joy-production-17ff.up.railway.app";
+    var urlParams = new URLSearchParams(window.location.search);
+    var token = urlParams.get("token");
+    var email = urlParams.get("email");
+
+    if (token && email) {
+      document.getElementById("request-state").style.display = "none";
+      document.getElementById("update-state").style.display = "block";
+      loadProfile();
+    }
+
+    function loadProfile() {
+      fetch(RAILWAY_URL + "/get-profile?token=" + encodeURIComponent(token) + "&email=" + encodeURIComponent(email))
+        .then(function(r) { return r.json(); })
+        .then(function(profile) {
+          if (profile.error) {
+            document.getElementById("loading-state").style.display = "none";
+            document.getElementById("error-state").style.display = "block";
+            return;
+          }
+          document.getElementById("loading-state").style.display = "none";
+          document.getElementById("profile-form").style.display = "block";
+
+          if (profile.job_title) document.getElementById("job_title").value = profile.job_title;
+          if (profile.employer) document.getElementById("employer").value = profile.employer;
+          if (profile.daily_responsibilities) document.getElementById("daily_responsibilities").value = profile.daily_responsibilities;
+          if (profile.location_city) document.getElementById("location_city").value = profile.location_city;
+          if (profile.industry) document.getElementById("industry").value = profile.industry;
+          if (profile.seniority) {
+            var radios = document.querySelectorAll("input[name='seniority']");
+            radios.forEach(function(r) { if (r.value === profile.seniority) r.checked = true; });
+          }
+          if (profile.work_arrangement) {
+            var radios = document.querySelectorAll("input[name='work_arrangement']");
+            radios.forEach(function(r) { if (r.value === profile.work_arrangement) r.checked = true; });
+          }
+          if (profile.concerns && Array.isArray(profile.concerns)) {
+            var checkboxes = document.querySelectorAll("input[name='concerns']");
+            checkboxes.forEach(function(cb) { cb.checked = profile.concerns.indexOf(cb.value) > -1; });
+          }
+        })
+        .catch(function() {
+          document.getElementById("loading-state").style.display = "none";
+          document.getElementById("error-state").style.display = "block";
+        });
+    }
+
+    function saveProfile() {
+      var btn = document.getElementById("save-btn");
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+
+      var concerns = [];
+      document.querySelectorAll("input[name='concerns']:checked").forEach(function(cb) { concerns.push(cb.value); });
+      var seniority = "";
+      document.querySelectorAll("input[name='seniority']:checked").forEach(function(r) { seniority = r.value; });
+      var work_arrangement = "";
+      document.querySelectorAll("input[name='work_arrangement']:checked").forEach(function(r) { work_arrangement = r.value; });
+
+      var payload = {
+        token: token,
+        email: email,
+        job_title: document.getElementById("job_title").value.trim(),
+        employer: document.getElementById("employer").value.trim(),
+        daily_responsibilities: document.getElementById("daily_responsibilities").value.trim(),
+        industry: document.getElementById("industry").value,
+        location_city: document.getElementById("location_city").value.trim(),
+        seniority: seniority,
+        work_arrangement: work_arrangement,
+        concerns: concerns
+      };
+
+      fetch(RAILWAY_URL + "/update-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var status = document.getElementById("save-status");
+        if (data.status === "ok") {
+          status.className = "status-msg status-ok";
+          status.textContent = "✓ Profile updated. Changes take effect on your next Monday briefing.";
+          status.style.display = "block";
+          btn.textContent = "Saved ✓";
+        } else {
+          throw new Error(data.error || "Unknown error");
+        }
+      })
+      .catch(function(e) {
+        var status = document.getElementById("save-status");
+        status.className = "status-msg status-err";
+        status.textContent = "Something went wrong. Please try again.";
+        status.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Save Changes →";
+      });
+    }
+
+    function requestLink() {
+      var btn = document.getElementById("request-btn");
+      var emailVal = document.getElementById("request-email").value.trim();
+      if (!emailVal) return;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+
+      fetch(RAILWAY_URL + "/request-update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailVal })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var status = document.getElementById("request-status");
+        if (data.status === "ok") {
+          status.className = "status-msg status-ok";
+          status.textContent = "✓ Check your inbox — update link sent.";
+        } else {
+          status.className = "status-msg status-err";
+          status.textContent = data.error || "Something went wrong.";
+        }
+        status.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Send Update Link →";
+      })
+      .catch(function() {
+        var status = document.getElementById("request-status");
+        status.className = "status-msg status-err";
+        status.textContent = "Something went wrong. Please try again.";
+        status.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Send Update Link →";
+      });
+    }
+  </script>
+</body>
+</html>
