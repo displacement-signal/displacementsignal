@@ -812,22 +812,16 @@
     var barInterval = setInterval(function() { width = Math.min(width + (Math.random() * 8 + 2), 90); barFill.style.width = width + "%"; }, 300);
     var msgInterval = setInterval(function() { msgIndex = (msgIndex + 1) % teaserLoadingMessages.length; loadingMsg.textContent = teaserLoadingMessages[msgIndex]; }, 1800);
 
-    fetch("https://api.anthropic.com/v1/messages", {
+    fetch("https://tender-joy-production-17ff.up.railway.app/score", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: "You are Displacement Signal risk engine. Job Title: " + title + ". Industry: " + industry + ". Respond ONLY with valid JSON no markdown: {"score": <1-10>, "label": <Minimal Risk|Low Risk|Moderate Risk|Elevated Risk|High Risk|Critical Risk>, "analysis": <2-3 sentences specific to this role and industry citing real AI trends and tools>}" }]
-      })
+      body: JSON.stringify({ job_title: title, industry: industry })
     })
     .then(function(r) { return r.json(); })
-    .then(function(data) {
+    .then(function(parsed) {
       clearInterval(barInterval); clearInterval(msgInterval);
       barFill.style.width = "100%";
       setTimeout(function() {
-        var text = data.content[0].text;
-        var parsed = JSON.parse(text.replace(/```json|```/g, "").trim());
         document.getElementById("teaser-loading").style.display = "none";
         document.getElementById("teaser-result").style.display = "block";
         document.getElementById("result-score").textContent = parsed.score;
@@ -845,6 +839,7 @@
       document.getElementById("teaser-error").style.display = "block";
     });
   }
+  REMOVETO
 
   function resetTeaser() {
     document.getElementById("teaser-result").style.display = "none";
