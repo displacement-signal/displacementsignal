@@ -1209,188 +1209,88 @@
   </div>
 </footer>
 
-<!-- ── SCRIPTS ────────────────────────────────────────────────────── -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  /* ── COUNTDOWN TIMER ── */
+<!-- ── SCRIPTS ───────────────────────────────────────────────────────── -->
+<script>
+  // COUNTDOWN
   (function() {
-    const deadline = new Date('2026-05-31T23:59:59');
+    var deadline = new Date('2026-05-31T23:59:59');
     function tick() {
-      const now = new Date();
-      const diff = deadline - now;
-      if (diff <= 0) {
-        document.getElementById('countdown-timer').textContent = 'BETA CLOSED';
-        return;
-      }
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      document.getElementById('countdown-timer').textContent =
-        `${d}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+      var diff = deadline - new Date();
+      if (diff <= 0) { document.getElementById('countdown-timer').textContent = 'BETA CLOSED'; return; }
+      var d = Math.floor(diff/86400000);
+      var h = Math.floor((diff%86400000)/3600000);
+      var m = Math.floor((diff%3600000)/60000);
+      var s = Math.floor((diff%60000)/1000);
+      document.getElementById('countdown-timer').textContent = d+'d '+('0'+h).slice(-2)+'h '+('0'+m).slice(-2)+'m '+('0'+s).slice(-2)+'s';
     }
-    tick();
-    setInterval(tick, 1000);
+    tick(); setInterval(tick, 1000);
   })();
 
-  /* ── REPORT DATE ── */
+  // REPORT DATE
+  var el = document.getElementById('report-date');
+  if (el) el.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + ' · Live';
+
+  // LIVE REPORT
   (function() {
-    const el = document.getElementById('report-date');
-    if (el) {
-      el.textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' · Live';
-    }
-  })();
-
-  /* ── LIVE REPORT FETCH ── */
-  (function() {
-    const RAILWAY = 'https://tender-joy-production-17ff.up.railway.app';
-    const loadingEl = document.getElementById('report-loading');
-    const liveEl = document.getElementById('live-report-content');
-    const staticEl = document.getElementById('report-static');
-
-    function badgeClass(level) {
-      if (!level) return 'badge-neutral';
-      const l = level.toLowerCase();
-      if (l === 'high') return 'badge-high';
-      if (l === 'watch' || l === 'medium') return 'badge-watch';
-      return 'badge-neutral';
-    }
-    function badgeLabel(level) {
-      if (!level) return 'INFO';
-      return level.toUpperCase();
-    }
-
-    var fbTimer = setTimeout(function(){ document.getElementById('report-loading').style.display='none'; document.getElementById('report-static').style.display='block'; }, 5000);
+    var RAILWAY = 'https://tender-joy-production-17ff.up.railway.app';
+    var loadingEl = document.getElementById('report-loading');
+    var liveEl = document.getElementById('live-report-content');
+    var staticEl = document.getElementById('report-static');
+    function showStatic() { loadingEl.style.display='none'; staticEl.style.display='block'; }
+    function bc(s) { var c=s.badge_class||''; if(c==='risk-high') return 'badge-high'; if(c==='risk-med') return 'badge-watch'; var b=(s.badge||'').toLowerCase(); if(b==='high') return 'badge-high'; if(b==='watch') return 'badge-watch'; return 'badge-neutral'; }
+    function bl(s) { return (s.badge||'INFO').toUpperCase(); }
+    var t = setTimeout(showStatic, 6000);
     fetch(RAILWAY + '/public-report')
-      .then(function(r){ return r.json(); })
+      .then(function(r) { return r.json(); })
       .then(function(data) {
-        clearTimeout(fbTimer);
+        clearTimeout(t);
         loadingEl.style.display = 'none';
-        if (!data) { staticEl.style.display='block'; return; }
+        if (!data) { showStatic(); return; }
         var html = '';
         var role = data.role_label || data.role || 'General';
-        function bc(s){ var c=s.badge_class||''; if(c==='risk-high') return 'badge-high'; if(c==='risk-med') return 'badge-watch'; var b=(s.badge||'').toLowerCase(); if(b==='high') return 'badge-high'; if(b==='watch') return 'badge-watch'; return 'badge-neutral'; }
-        function bl(s){ return (s.badge||'INFO').toUpperCase(); }
-        if(data.signals&&data.signals.length){ html+='<div class="report-section-title">Signals — '+role+'</div>'; data.signals.forEach(function(s){ html+='<div class="signal-row"><div class="signal-badge '+bc(s)+'">'+bl(s)+'</div><div class="signal-text">'+(s.text||'')+'</div></div>'; }); }
-        if(data.funding&&data.funding.length){ html+='<div class="report-section-title" style="margin-top:16px">Funding Signals</div>'; data.funding.forEach(function(s){ html+='<div class="signal-row"><div class="signal-badge '+bc(s)+'">'+bl(s)+'</div><div class="signal-text">'+(s.text||'')+'</div></div>'; }); }
-        if(data.action){ html+='<div class="report-action"><div class="report-action-label">→ Recommended Action</div><p>'+data.action+'</p></div>'; }
-        if(html.length>50){ document.getElementById('live-report-content').innerHTML=html; document.getElementById('live-report-content').style.display='block'; }
-        else { staticEl.style.display='block'; }
-
-        let html = '';
-
-        // Try structured sections format
-        if (data.sections && Array.isArray(data.sections)) {
-          data.sections.forEach(section => {
-            if (section.title) {
-              html += `<div class="report-section-title">${section.title}</div>`;
-            }
-            if (section.signals && Array.isArray(section.signals)) {
-              section.signals.forEach(sig => {
-                const lvl = sig.level || sig.importance || '';
-                html += `<div class="signal-row">
-                  <div class="signal-badge ${badgeClass(lvl)}">${badgeLabel(lvl)}</div>
-                  <div class="signal-text">${sig.text || sig.content || sig.summary || ''}</div>
-                </div>`;
-              });
-            }
-            if (section.action || section.recommendation) {
-              html += `<div class="report-action">
-                <div class="report-action-label">→ Recommended Action</div>
-                <p>${section.action || section.recommendation}</p>
-              </div>`;
-            }
-          });
+        if (data.signals && data.signals.length) {
+          html += '<div class="report-section-title">Signals — ' + role + '</div>';
+          data.signals.forEach(function(s) { html += '<div class="signal-row"><div class="signal-badge '+bc(s)+'">'+bl(s)+'</div><div class="signal-text">'+(s.text||'')+'</div></div>'; });
         }
-        // Try flat signals format
-        else if (data.signals && Array.isArray(data.signals)) {
-          html += `<div class="report-section-title">Live Signals — ${data.role || 'General'}</div>`;
-          data.signals.forEach(sig => {
-            const lvl = sig.level || sig.importance || '';
-            html += `<div class="signal-row">
-              <div class="signal-badge ${badgeClass(lvl)}">${badgeLabel(lvl)}</div>
-              <div class="signal-text">${sig.text || sig.content || sig.summary || ''}</div>
-            </div>`;
-          });
-          if (data.action || data.recommendation) {
-            html += `<div class="report-action">
-              <div class="report-action-label">→ Recommended Action</div>
-              <p>${data.action || data.recommendation}</p>
-            </div>`;
-          }
+        if (data.funding && data.funding.length) {
+          html += '<div class="report-section-title" style="margin-top:16px">Funding Signals</div>';
+          data.funding.forEach(function(s) { html += '<div class="signal-row"><div class="signal-badge '+bc(s)+'">'+bl(s)+'</div><div class="signal-text">'+(s.text||'')+'</div></div>'; });
         }
-        // Fallback: plain text/content
-        else if (data.content || data.report) {
-          html = `<div style="font-size:14px;color:#bbb;line-height:1.8;white-space:pre-wrap">${(data.content || data.report).substring(0, 1200)}…</div>`;
-        }
-
-        if (html) {
-          liveEl.innerHTML = html;
-          liveEl.style.display = 'block';
-        } else {
-          staticEl.style.display = 'block';
-        }
+        if (data.action) { html += '<div class="report-action"><div class="report-action-label">→ Recommended Action</div><p>'+data.action+'</p></div>'; }
+        if (html.length > 50) { liveEl.innerHTML = html; liveEl.style.display = 'block'; }
+        else { showStatic(); }
       })
-      .catch(() => {
-        loadingEl.style.display = 'none';
-        staticEl.style.display = 'block';
-      });
+      .catch(function() { clearTimeout(t); showStatic(); });
   })();
 
-  /* ── RISK SCORE TEASER ── */
-  const RAILWAY = 'https://tender-joy-production-17ff.up.railway.app';
-
+  // RISK SCORE
+  var RAILWAY = 'https://tender-joy-production-17ff.up.railway.app';
   function generateScore() {
-    const title = document.getElementById('job-title-input').value.trim();
-    const industry = document.getElementById('industry-input').value.trim();
-    const errEl = document.getElementById('score-error');
+    var title = document.getElementById('job-title-input').value.trim();
+    var industry = document.getElementById('industry-input').value.trim();
+    var errEl = document.getElementById('score-error');
     errEl.style.display = 'none';
-
-    if (!title || !industry) {
-      errEl.textContent = 'Please enter both your job title and industry.';
-      errEl.style.display = 'block';
-      return;
-    }
-
-    const btn = document.getElementById('score-btn');
-    btn.disabled = true;
-    btn.textContent = 'Analyzing…';
-
-    fetch(RAILWAY + '/score', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_title: title, industry: industry })
-    })
-    .then(r => r.json())
-    .then(data => {
-      const score = data.score || 5;
-      const label = data.label || 'Moderate Risk';
-      const analysis = data.analysis || 'Signals detected in your sector. Subscribe for full details.';
-
-      const scoreEl = document.getElementById('score-value');
-      scoreEl.textContent = score + '/10';
-
-      let riskClass = 'risk-mid';
-      if (score >= 7) riskClass = 'risk-high';
-      else if (score <= 3) riskClass = 'risk-low';
-      scoreEl.className = 'score-number ' + riskClass;
-
-      const labelEl = document.getElementById('score-label-text');
-      labelEl.textContent = label;
-      labelEl.className = 'score-label ' + riskClass;
-
-      document.getElementById('score-analysis-text').textContent = analysis;
-
-      document.getElementById('teaser-form').style.display = 'none';
-      document.getElementById('score-result').style.display = 'block';
-    })
-    .catch(() => {
-      errEl.textContent = 'Something went wrong. Try again in a moment.';
-      errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.textContent = 'Generate My Risk Score →';
-    });
+    if (!title || !industry) { errEl.textContent = 'Please enter both your job title and industry.'; errEl.style.display = 'block'; return; }
+    var btn = document.getElementById('score-btn');
+    btn.disabled = true; btn.textContent = 'Analyzing…';
+    fetch(RAILWAY + '/score', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({job_title:title, industry:industry}) })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var score = data.score || 5;
+        var label = data.label || 'Moderate Risk';
+        var analysis = data.analysis || 'Signals detected. Subscribe for full details.';
+        var scoreEl = document.getElementById('score-value');
+        scoreEl.textContent = score + '/10';
+        var rc = score >= 7 ? 'risk-high' : score <= 3 ? 'risk-low' : 'risk-mid';
+        scoreEl.className = 'score-number ' + rc;
+        var labelEl = document.getElementById('score-label-text');
+        labelEl.textContent = label; labelEl.className = 'score-label ' + rc;
+        document.getElementById('score-analysis-text').textContent = analysis;
+        document.getElementById('teaser-form').style.display = 'none';
+        document.getElementById('score-result').style.display = 'block';
+      })
+      .catch(function() { errEl.textContent = 'Something went wrong. Try again.'; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Generate Score →'; });
   }
-
   function resetScore() {
     document.getElementById('teaser-form').style.display = 'block';
     document.getElementById('score-result').style.display = 'none';
@@ -1398,14 +1298,10 @@
     document.getElementById('score-btn').textContent = 'Generate Score →';
     document.getElementById('score-error').style.display = 'none';
   }
+  document.getElementById('job-title-input').addEventListener('keydown', function(e) { if(e.key==='Enter') generateScore(); });
+  document.getElementById('industry-input').addEventListener('keydown', function(e) { if(e.key==='Enter') generateScore(); });
 
-  document.getElementById('job-title-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') generateScore();
-  });
-  document.getElementById('industry-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') generateScore();
-  });
-
+  // FAQ
   function toggleFaq(btn) {
     var item = btn.parentElement;
     var isOpen = item.classList.contains('open');
