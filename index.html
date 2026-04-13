@@ -1406,7 +1406,13 @@
     if (e.key === 'Enter') generateScore();
   });
 
-  /* ── FAQ ACCORDION ── */
   function toggleFaq(btn) {
-    const item = btn.closest('.faq-item');
-    c
+    var item = btn.parentElement;
+    var isOpen = item.classList.contains('open');
+    var all = document.querySelectorAll('.faq-item');
+    for (var i=0; i<all.length; i++) { all[i].classList.remove('open'); }
+    if (!isOpen) { item.classList.add('open'); }
+  }
+</script>
+</body>
+</html>
