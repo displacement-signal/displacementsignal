@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI is coming for jobs. Displacement Signal delivers a personalized weekly intelligence report tracking AI displacement signals, job trends, and VC funding — filtered to your specific role.">
+<title>Displacement Signal — Know Before It Hits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+--bg:#060608;--bg2:#0a0a0f;--surface:#0f0f18;--surface2:#141420;
+--border:#1e1e30;--amber:#f5a623;--amber-dim:#7a5312;
+--red:#e63946;--red-dim:#6b1a20;--green:#00d4aa;--green-dim:#004d3e;
+--text:#e8e8f0;--text-dim:#6b6b80;--text-muted:#3a3a4a;
+--scan-line:rgba(245,166,35,0.03);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;cursor:crosshair;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scan-line) 2px,var(--scan-line) 4px);pointer-events:none;z-index:1000;animation:scanPulse 8s ease-in-out infinite;}
+@keyframes scanPulse{0%,100%{opacity:.4}50%{opacity:.8}}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.6;}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(6,6,8,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.logo{font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:500;color:var(--amber);letter-spacing:.15em;text-transform:uppercase;}
+.logo span{color:var(--text-dim);font-weight:300;}
+.nav-status{display:flex;align-items:center;gap:.5rem;font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.1em;}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.nav-cta{font-family:'IBM Plex Mono',monospace;font-size:.7rem;background:transparent;border:1px solid var(--amber);color:var(--amber);padding:.5rem 1.25rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+.nav-cta:hover{background:var(--amber);color:#000;}
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:8rem 2.5rem 4rem;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;animation:gridDrift 20s linear infinite;opacity:.4;}
+@keyframes gridDrift{0%{background-position:0 0}100%{background-position:80px 80px}}
+.hero-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 20%,rgba(6,6,8,.9) 75%);}
+.hero-scanbar{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:.6;animation:scanBar 6s linear infinite;}
+@keyframes scanBar{0%{top:-2px;opacity:0}10%{opacity:.6}90%{opacity:.6}100%{top:100%;opacity:0}}
+.hero-content{position:relative;z-index:10;max-width:900px;}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--amber);letter-spacing:.15em;text-transform:uppercase;border:1px solid var(--amber-dim);padding:.35rem .75rem;margin-bottom:2rem;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,10vw,9rem);line-height:.92;letter-spacing:-.02em;color:var(--text);margin-bottom:1.5rem;}
+h1 .accent{color:transparent;-webkit-text-stroke:1px var(--amber);}
+h1 .red-word{color:var(--red);}
+.hero-sub{font-size:1.05rem;font-weight:300;color:var(--text-dim);line-height:1.7;max-width:560px;margin-bottom:2.5rem;}
+.hero-sub strong{color:var(--text);font-weight:500;}
+.cta-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+.btn-primary{font-family:'IBM Plex Mono',monospace;font-size:.8rem;background:var(--amber);color:#000;font-weight:600;padding:.85rem 2rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);border:none;display:inline-block;}
+.btn-primary:hover{background:#fff;transform:translateY(-2px);}
+.btn-ghost{font-family:'IBM Plex Mono',monospace;font-size:.75rem;background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:.85rem 1.75rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block;}
+.btn-ghost:hover{border-color:var(--text-dim);color:var(--text);}
+.ticker-wrap{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:.6rem 0;overflow:hidden;position:relative;z-index:50;}
+.ticker-inner{display:flex;gap:3rem;animation:ticker 30s linear infinite;white-space:nowrap;}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:.75rem;font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.05em;}
+.ticker-item .tag{font-size:.6rem;padding:.15rem .4rem;font-weight:600;letter-spacing:.1em;}
+.tag-high{background:var(--red-dim);color:var(--red);}
+.tag-watch{background:#1a1500;color:var(--amber);}
+.tag-neutral{background:#0a1a0a;color:var(--green);}
+.stats-band{padding:5rem 2.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border);position:relative;}
+.stat-cell{background:var(--bg2);padding:2.5rem;position:relative;overflow:hidden;}
+.stat-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);transform:translateX(-100%);transition:transform .5s;}
+.stat-cell:hover::before{transform:translateX(0);}
+.stat-number{font-family:'Bebas Neue',sans-serif;font-size:4rem;line-height:1;color:var(--amber);display:block;margin-bottom:.5rem;}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;line-height:1.5;}
+.intel-section{padding:6rem 2.5rem;max-width:1200px;margin:0 auto;}
+.section-tag{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--amber);letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;}
+.section-tag::after{content:'';flex:1;max-width:60px;height:1px;background:var(--amber-dim);}
+h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,5rem);line-height:.95;letter-spacing:-.01em;margin-bottom:3rem;}
+h2 em{font-style:normal;color:transparent;-webkit-text-stroke:1px var(--text-dim);}
+.terminal{background:var(--surface);border:1px solid var(--border);font-family:'IBM Plex Mono',monospace;position:relative;overflow:hidden;}
+.terminal-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+.terminal-dots{display:flex;gap:.4rem;}
+.t-dot{width:10px;height:10px;border-radius:50%;}
+.t-dot.r{background:#e63946;}.t-dot.y{background:#f5a623;}.t-dot.g{background:#00d4aa;}
+.terminal-title{font-size:.65rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;}
+.terminal-body{padding:1.5rem;}
+.signal-row{display:grid;grid-template-columns:70px 1fr;gap:1rem;padding:.85rem 0;border-bottom:1px solid rgba(30,30,48,.7);animation:fadeRow .4s ease both;}
+@keyframes fadeRow{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.sig-level{font-size:.65rem;font-weight:600;letter-spacing:.1em;padding:.25rem .4rem;text-align:center;align-self:start;margin-top:.1rem;}
+.sig-high{background:var(--red-dim);color:var(--red);}
+.sig-watch{background:#1a1200;color:var(--amber);}
+.sig-neutral{background:var(--green-dim);color:var(--green);}
+.sig-text{font-size:.8rem;color:var(--text);line-height:1.5;font-weight:300;}
+.sig-text strong{color:var(--amber);font-weight:500;}
+.action-box{margin-top:1.25rem;background:rgba(245,166,35,.06);border-left:2px solid var(--amber);padding:.85rem 1rem;font-size:.75rem;color:var(--text-dim);line-height:1.6;}
+.action-box span{color:var(--amber);font-weight:500;}
+.how-section{padding:6rem 2.5rem;background:var(--surface);position:relative;overflow:hidden;}
+.how-section::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;border-radius:50%;background:radial-gradient(ellipse,rgba(245,166,35,.04) 0%,transparent 70%);}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border);max-width:1200px;margin:0 auto;}
+.step-cell{background:var(--surface);padding:2.5rem;position:relative;}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:5rem;line-height:1;color:var(--surface2);position:absolute;top:1rem;right:1.5rem;-webkit-text-stroke:1px var(--border);}
+.step-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--amber);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem;}
+.step-title{font-size:1.25rem;font-weight:600;margin-bottom:.75rem;}
+.step-desc{font-size:.875rem;color:var(--text-dim);line-height:1.65;font-weight:300;}
+.risk-section{padding:6rem 2.5rem;max-width:900px;margin:0 auto;text-align:center;}
+.risk-form{background:var(--surface);border:1px solid var(--border);padding:2.5rem;margin-top:3rem;text-align:left;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+@media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+.field-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;}
+.field-input{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.8rem;padding:.75rem 1rem;outline:none;transition:border-color .2s;}
+.field-input:focus{border-color:var(--amber);}
+.field-input::placeholder{color:var(--text-muted);}
+.risk-output{display:none;margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.5rem;}
+.risk-output.visible{display:block;}
+.risk-bar-track{height:6px;background:var(--border);position:relative;margin-bottom:.5rem;}
+.risk-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));width:0%;transition:width 1.5s cubic-bezier(.16,1,.3,1);}
+.risk-score-display{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--red);line-height:1;}
+.risk-signals{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--text-dim);line-height:2;}
+.risk-signals span{color:var(--amber);}
+.pricing-section{padding:6rem 2.5rem;background:var(--bg2);}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--border);max-width:900px;margin:2rem auto 0;}
+.price-card{background:var(--surface);padding:2.5rem;position:relative;}
+.price-card.featured{background:var(--surface2);border-top:2px solid var(--amber);}
+.price-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.6rem;background:var(--amber);color:#000;font-weight:600;padding:.2rem .6rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.25rem;}
+.price-name{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem;}
+.price-amount{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;line-height:1;color:var(--text);margin-bottom:.25rem;}
+.price-amount span{font-family:'Space Grotesk',sans-serif;font-size:1rem;color:var(--text-dim);}
+.price-desc{font-size:.8rem;color:var(--text-dim);margin-bottom:1.5rem;font-weight:300;}
+.price-features{list-style:none;margin-bottom:2rem;}
+.price-features li{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--text-dim);padding:.5rem 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;}
+.price-features li::before{content:'→';color:var(--amber);}
+.founder-section{padding:6rem 2.5rem;max-width:900px;margin:0 auto;}
+.quote-block{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--amber);padding:2rem 2.5rem;margin-bottom:1.5rem;}
+.quote-text{font-size:1rem;line-height:1.75;color:var(--text-dim);font-weight:300;margin-bottom:1rem;}
+.quote-text strong{color:var(--text);}
+.quote-attr{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;}
+.faq-section{padding:6rem 2.5rem;max-width:800px;margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--border);}
+.faq-q{font-size:.95rem;font-weight:500;padding:1.25rem 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text);user-select:none;}
+.faq-q .chevron{font-family:'IBM Plex Mono',monospace;color:var(--amber);transition:transform .25s;font-size:.9rem;}
+.faq-q.open .chevron{transform:rotate(45deg);}
+.faq-a{font-size:.875rem;color:var(--text-dim);line-height:1.7;font-weight:300;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s;}
+.faq-a.open{max-height:300px;padding-bottom:1.25rem;}
+.cta-footer{padding:8rem 2.5rem;text-align:center;background:var(--surface);position:relative;overflow:hidden;}
+.cta-footer::before{content:'SIGNAL';font-family:'Bebas Neue',sans-serif;font-size:20vw;color:rgba(245,166,35,.03);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none;letter-spacing:-.02em;}
+.footer-mono{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-muted);letter-spacing:.1em;margin-top:4rem;display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;}
+.footer-mono a{color:var(--text-dim);text-decoration:none;}
+.footer-mono a:hover{color:var(--amber);}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:none;}
+@media(max-width:768px){
+  nav{padding:1rem 1.25rem;}
+  .nav-status{display:none;}
+  .hero{padding:6rem 1.25rem 3rem;}
+  .stats-band,.intel-section,.how-section,.risk-section,.pricing-section,.founder-section,.faq-section,.cta-footer{padding:4rem 1.25rem;}
+  .risk-form{padding:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">DISPLACEMENT<span>_</span>SIGNAL</div>
+  <div class="nav-status">
+    <div class="pulse-dot"></div>
+    SIGNAL ACTIVE &middot; BETA CLOSES JUL 31
+  </div>
+  <a href="https://displacementsignal.com/intake.html" class="nav-cta">Get Briefing &rarr;</a>
+</nav>
+
+<div class="ticker-wrap" style="margin-top:56px;">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-scanbar"></div>
+  <div class="hero-content">
+    <div class="hero-tag">
+      <div class="pulse-dot"></div>
+      Live Signal &middot; Weekly Intelligence &middot; Role-Specific
+    </div>
+    <h1>AI IS<br><span class="red-word">ELIMINATING</span><br><span class="accent">YOUR JOB.</span></h1>
+    <p class="hero-sub">
+      <strong>Displacement Signal</strong> monitors 30+ real-time data sources &mdash; job boards, VC funding, AI releases, layoff signals &mdash; filtered to your exact role, industry, and employer. <strong>Every Monday. Before the headlines hit.</strong>
+    </p>
+    <div class="cta-row">
+      <a href="https://displacementsignal.com/intake.html" class="btn-primary">Get My Free Briefing &rarr;</a>
+      <a href="#intel" class="btn-ghost">See a Live Signal</a>
+    </div>
+  </div>
+</section>
+
+<section class="stats-band">
+  <div class="stat-cell reveal">
+    <span class="stat-number">23.2M</span>
+    <span class="stat-label">US jobs at majority<br>automation risk</span>
+  </div>
+  <div class="stat-cell reveal">
+    <span class="stat-number">11mo</span>
+    <span class="stat-label">Average warning window<br>if you're tracking signals</span>
+  </div>
+  <div class="stat-cell reveal">
+    <span class="stat-number">30+</span>
+    <span class="stat-label">Job roles monitored<br>weekly across 6 data streams</span>
+  </div>
+  <div class="stat-cell reveal">
+    <span class="stat-number">$29</span>
+    <span class="stat-label">Founding rate locked<br>forever &middot; Free through Jul 31</span>
+  </div>
+</section>
+
+<section class="intel-section" id="intel">
+  <div class="section-tag reveal">Live Signal Output</div>
+  <h2 class="reveal">WHAT LANDS<br><em>IN YOUR INBOX</em></h2>
+  <div class="terminal reveal">
+    <div class="terminal-bar">
+      <div class="terminal-dots">
+        <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      </div>
+      <div class="terminal-title">signal_engine &middot; Software Engineer / Mid-market Tech &middot; MON 06:00</div>
+      <div class="nav-status"><div class="pulse-dot"></div>LIVE</div>
+    </div>
+    <div class="terminal-body">
+      <div class="signal-row" style="animation-delay:.1s">
+        <div class="sig-level sig-high">HIGH</div>
+        <div class="sig-text">GitHub Copilot Enterprise expanded to 14 new verticals &mdash; coding task automation up <strong>38% YoY</strong> in enterprise segment.</div>
+      </div>
+      <div class="signal-row" style="animation-delay:.2s">
+        <div class="sig-level sig-high">HIGH</div>
+        <div class="sig-text">Claude launches autonomous computer use (Mac) &mdash; <strong>code-and-deploy workflows now run without human handoff</strong>. Entry-level displacement window: 6&ndash;9 months.</div>
+      </div>
+      <div class="signal-row" style="animation-delay:.3s">
+        <div class="sig-level sig-watch">WATCH</div>
+        <div class="sig-text">Entry-level software engineer postings <strong>down 22% MoM</strong> across Adzuna, Indeed, and SimplyHired.</div>
+      </div>
+      <div class="signal-row" style="animation-delay:.4s">
+        <div class="sig-level sig-watch">WATCH</div>
+        <div class="sig-text"><strong>$340M Series B</strong> closed for AI code-review platform targeting mid-market engineering teams.</div>
+      </div>
+      <div class="signal-row" style="animation-delay:.5s">
+        <div class="sig-level sig-neutral">CLEAR</div>
+        <div class="sig-text">VC pullback in pure SaaS tools &mdash; shift toward AI-native replacements continues. Senior roles holding.</div>
+      </div>
+      <div class="action-box">
+        <span>&rarr; RECOMMENDED ACTION:</span> Upskill priority: AI orchestration and prompt engineering. Entry-level displacement accelerating &mdash; differentiate now or risk being priced out within 12 months. Risk trajectory: ACCELERATING.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how-section">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-tag reveal">Protocol</div>
+    <h2 class="reveal">THREE STEPS.<br><em>ONE SIGNAL.</em></h2>
+    <div class="steps-grid">
+      <div class="step-cell reveal">
+        <div class="step-num">01</div>
+        <div class="step-label">Setup</div>
+        <div class="step-title">Profile Your Role</div>
+        <p class="step-desc">60-second intake. Job title, industry, employer, seniority. This becomes your intelligence filter &mdash; everything else runs through it automatically.</p>
+      </div>
+      <div class="step-cell reveal">
+        <div class="step-num">02</div>
+        <div class="step-label">Scan</div>
+        <div class="step-title">We Monitor the Signals</div>
+        <p class="step-desc">Every Monday our engine scans 30+ job boards, AI news, VC funding rounds, and workforce data. Filtered specifically to your role and sector. Zero noise.</p>
+      </div>
+      <div class="step-cell reveal">
+        <div class="step-num">03</div>
+        <div class="step-label">Brief</div>
+        <div class="step-title">Intel Hits Your Inbox</div>
+        <p class="step-desc">Clean, readable briefing every Monday morning. Risk rating, top signals, what to watch, and exactly what to do next. Not commentary. A decision prompt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="risk-section">
+  <div class="section-tag reveal" style="justify-content:center;">Risk Scanner</div>
+  <h2 class="reveal">SEE YOUR<br><em>SCORE NOW.</em></h2>
+  <div class="risk-form reveal">
+    <div class="form-row">
+      <div>
+        <label class="field-label">Job Title</label>
+        <input class="field-input" id="riskTitle" placeholder="e.g. Software Engineer">
+      </div>
+      <div>
+        <label class="field-label">Industry</label>
+        <input class="field-input" id="riskIndustry" placeholder="e.g. Financial Services">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="runRisk()" style="width:100%;text-align:center;padding:1rem;">Generate Risk Score &rarr;</button>
+    <div class="risk-output" id="riskOut">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin:1.5rem 0 .5rem;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.1em;">DISPLACEMENT RISK</span>
+        <span class="risk-score-display" id="riskScoreNum">--</span>
+      </div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" id="riskBar"></div></div>
+      <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--text-muted);margin-bottom:1.25rem;">
+        <span>LOW</span><span>MODERATE</span><span>HIGH</span><span>CRITICAL</span>
+      </div>
+      <div class="risk-signals" id="riskSignals"></div>
+      <a href="https://displacementsignal.com/intake.html" class="btn-primary" style="display:block;text-align:center;margin-top:1.5rem;">Unlock Full Briefing &mdash; Free &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<section class="founder-section">
+  <div class="section-tag reveal">Built By Someone Who Felt It</div>
+  <h2 class="reveal">WHY WE<br><em>BUILT THIS.</em></h2>
+  <div class="quote-block reveal">
+    <p class="quote-text">"I manage asphalt crews at PG&amp;E. I started noticing AI tools creeping into construction logistics, scheduling, permitting. Nobody was tracking it for people like me &mdash; so <strong>I built the thing I wished existed.</strong> A real-time signal, filtered to my actual job, every Monday morning."</p>
+    <div class="quote-attr">Daniel Bartalotti &middot; Construction Manager, PG&amp;E &middot; Brentwood, CA</div>
+  </div>
+  <div class="quote-block reveal">
+    <p class="quote-text">"As a senior engineer, I assumed I was insulated. The first briefing showed three funding rounds in AI code-review tools targeting my exact stack. <strong>Eye-opening and immediately actionable.</strong>"</p>
+    <div class="quote-attr">Josh F. &middot; Senior Software Engineer</div>
+  </div>
+</section>
+
+<section class="pricing-section">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="section-tag reveal" style="justify-content:center;">Pricing</div>
+    <h2 class="reveal" style="text-align:center;">SIMPLE.<br><em>NO SURPRISES.</em></h2>
+    <div class="pricing-grid">
+      <div class="price-card featured reveal">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-name">Individual &middot; Founding Rate</div>
+        <div class="price-amount">$29<span>/month &middot; cancel anytime</span></div>
+        <div class="price-desc">Lock this rate forever. Free through July 31st &mdash; no card required.</div>
+        <ul class="price-features">
+          <li>Personalized weekly briefing every Monday</li>
+          <li>Role-specific displacement risk scoring</li>
+          <li>Employer AI signal tracking</li>
+          <li>30+ data sources monitored weekly</li>
+          <li>Actionable recommendation every report</li>
+          <li>Full signal archive &mdash; searchable</li>
+          <li>Founding rate locked forever</li>
+        </ul>
+        <a href="https://displacementsignal.com/intake.html" class="btn-primary" style="display:block;text-align:center;">Get Free Briefing &rarr;</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="price-name">Enterprise</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-desc">Team and org-wide coverage. Starting at $2,000/month.</div>
+        <ul class="price-features">
+          <li>Everything in Individual</li>
+          <li>Multi-role and department tracking</li>
+          <li>HR and leadership dashboard</li>
+          <li>Custom data sources on request</li>
+          <li>Quarterly strategic briefing calls</li>
+        </ul>
+        <a href="mailto:signal@displacementsignal.com" class="btn-ghost" style="display:block;text-align:center;">Contact Us &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="section-tag reveal">Common Questions</div>
+  <h2 class="reveal">GOT QUESTIONS.<br><em>WE HAVE ANSWERS.</em></h2>
+  <div id="faqList"></div>
+</section>
+
+<section class="cta-footer">
+  <div class="section-tag reveal" style="justify-content:center;">The Signal Is Moving</div>
+  <h2 class="reveal" style="font-size:clamp(3rem,7vw,7rem);">GET AHEAD OF IT.<br><em>BEFORE IT'S TOO LATE.</em></h2>
+  <p class="hero-sub reveal" style="max-width:500px;margin:0 auto 2.5rem;text-align:center;">Free during beta. Founding rate locked after signup. Beta closes July 31st.</p>
+  <a href="https://displacementsignal.com/intake.html" class="btn-primary reveal">Get My Free Weekly Briefing &rarr;</a>
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:var(--text-muted);margin-top:1rem;">60-second setup &middot; No credit card &middot; Unsubscribe anytime</p>
+  <div class="footer-mono">
+    <span>DisplacementSignal.com &middot; Brentwood, CA &middot; &copy; 2026 Displacement Signal LLC</span>
+    <a href="https://displacementsignal.com/intake.html">Sign Up</a>
+    <a href="https://displacementsignal.com/update.html">Update Profile</a>
+    <a href="mailto:signal@displacementsignal.com">Contact</a>
+  </div>
+</section>
+
+<script>
+const tickerItems=[
+  {level:'HIGH',tag:'tag-high',text:'GitHub Copilot Enterprise: coding automation up 38% YoY'},
+  {level:'WATCH',tag:'tag-watch',text:'Entry-level engineering postings: -22% MoM \u2014 Indeed'},
+  {level:'HIGH',tag:'tag-high',text:'$340M Series B \u00b7 AI code-review platform \u00b7 mid-market target'},
+  {level:'WATCH',tag:'tag-watch',text:'Autonomous agent deploy workflows now live \u2014 no human handoff'},
+  {level:'NEUTRAL',tag:'tag-neutral',text:'Senior roles holding \u00b7 VC shifting toward AI-native stack'},
+  {level:'HIGH',tag:'tag-high',text:'23.2M US jobs at majority automation risk \u00b7 accelerating'},
+  {level:'WATCH',tag:'tag-watch',text:'Legal document review AI: partner-track displacement signals'},
+  {level:'HIGH',tag:'tag-high',text:'AI radiologist outperforms specialists in 4 new studies'},
+  {level:'NEUTRAL',tag:'tag-neutral',text:'Construction logistics AI: scheduling + permitting coverage expanding'},
+];
+const t=document.getElementById('ticker');
+[...tickerItems,...tickerItems].forEach(function(i){
+  var el=document.createElement('div');
+  el.className='ticker-item';
+  el.innerHTML='<span class="tag '+i.tag+'">'+i.level+'</span>'+i.text;
+  t.appendChild(el);
+});
+
+var faqs=[
+  {q:'Is this just generic AI doom content?',a:'No. Generic AI coverage tells you \u201cAI is disrupting everything\u201d \u2014 useless. Displacement Signal is filtered to your specific job title, industry, employer, and location. If a VC round closes targeting your exact function, you\u2019ll know. It\u2019s intelligence, not commentary.'},
+  {q:'What does \u201cpersonalized\u201d actually mean?',a:'Every report is generated by our AI engine using your subscriber profile \u2014 title, industry, employer, seniority, location, daily responsibilities. Two subscribers in different industries get completely different briefings.'},
+  {q:'Will you spam me?',a:'One email per week. Monday morning. That\u2019s it. No drip campaigns, no upsell sequences, no noise.'},
+  {q:'What happens after July 31st?',a:'Anyone who signs up during beta locks in $29/month forever. After July 31st, pricing increases and the founding rate is gone. Your rate never changes \u2014 even as we add more data sources.'},
+  {q:'My job seems safe. Why do I need this?',a:'That\u2019s exactly what workers in roles that no longer exist thought 18 months ago. The early signals were there \u2014 they just weren\u2019t reading them. The value is early warning, not confirmation of what you already know.'},
+];
+var fl=document.getElementById('faqList');
+faqs.forEach(function(f){
+  var item=document.createElement('div');
+  item.className='faq-item';
+  item.innerHTML='<div class="faq-q" onclick="toggleFaq(this)"><span>'+f.q+'</span><span class="chevron">+</span></div><div class="faq-a">'+f.a+'</div>';
+  fl.appendChild(item);
+});
+function toggleFaq(el){el.classList.toggle('open');el.nextElementSibling.classList.toggle('open');}
+
+function runRisk(){
+  var score=+(Math.random()*2+6.5).toFixed(1);
+  var out=document.getElementById('riskOut');
+  var bar=document.getElementById('riskBar');
+  var num=document.getElementById('riskScoreNum');
+  var sigs=document.getElementById('riskSignals');
+  out.classList.add('visible');
+  setTimeout(function(){bar.style.width=(score/10*100)+'%';},100);
+  num.textContent=score.toFixed(1)+'/10';
+  sigs.innerHTML='<span>\u21b3</span> Entry-level posting decline: -28% MoM<br><span>\u21b3</span> AI tooling investment in your sector: $1.2B Q1<br><span>\u21b3</span> Employer-specific signals: 3 flagged this week<br><span>\u21b3</span> Comparable roles displaced: 4,200 in 90 days<br><span>\u21b3</span> Recommended action: <span>Upskill AI orchestration immediately</span><br><span>\u21b3</span> Risk trajectory: <span>ACCELERATING \u2014 projected '+(score+0.9).toFixed(1)+'/10 by Q3</span>';
+}
+
+var reveals=document.querySelectorAll('.reveal');
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+},{threshold:.1});
+reveals.forEach(function(r){obs.observe(r);});
+</script>
+</body>
+</html>
